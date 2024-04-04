@@ -17,6 +17,7 @@ async fn server_fn_handler(
             #[cfg(feature = "oauth-google")]
             provide_context(app_state.google_oauth.clone());
             provide_context(app_state.kv.clone());
+            provide_context(app_state.cookie_key.clone());
         },
         request,
     )
@@ -34,6 +35,7 @@ async fn leptos_routes_handler(
             #[cfg(feature = "oauth-google")]
             provide_context(app_state.google_oauth.clone());
             provide_context(app_state.kv.clone());
+            provide_context(app_state.cookie_key.clone());
         },
         App,
     );

@@ -29,14 +29,17 @@ serde_with = { version = "3.7.0", features = ["hex"], optional = true }
 serde.workspace = true
 figment = { version = "0.10.15", features = ["toml", "env"], optional = true }
 store = { package = "yral-auth-store", path = "../store", optional = true }
-types = { package = "yral-auth-types", path = "../types", optional = true }
-ic-agent.workspace = true
+types = { package = "yral-auth-types", path = "../types" }
+ic-agent = { workspace = true, default-features = false }
 k256.workspace = true
 rand_core = { version = "0.6.4", optional = true }
 web-time = "1.1.0"
+leptos_icons = "0.3.0"
+icondata = "0.3.0"
+icondata_core = "0.1.0"
 
 [features]
-hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
+hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate", "ic-agent/wasm-bindgen"]
 ssr = [
     "dep:axum",
     "dep:tokio",
@@ -53,7 +56,6 @@ ssr = [
     "dep:openidconnect",
     "dep:serde_with",
     "dep:figment",
-    "dep:types",
     "dep:rand_core"
 ]
 redis-kv = []
@@ -75,7 +77,19 @@ site-root = "target/site"
 site-pkg-dir = "pkg"
 
 # [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
-style-file = "style/main.scss"
+#style-file = "style/main.scss"
+
+# The tailwind input file.
+tailwind-input-file = "style/input.css"
+
+# The tailwind config file.
+tailwind-config-file = "tailwind.config.js"
+
+# Enables additional file hashes on outputted css, js, and wasm files
+#
+# Optional: Defaults to false. Can also be set with the LEPTOS_HASH_FILES=false env var
+hash-files = true
+
 # Assets source dir. All files found here will be copied and synchronized to site-root.
 # The assets-dir cannot have a sub directory with the same name/path as site-pkg-dir.
 #

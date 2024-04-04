@@ -5,6 +5,8 @@ pub mod fileserv;
 pub mod state;
 pub mod consts;
 pub mod api;
+pub mod page;
+pub mod auth_providers;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

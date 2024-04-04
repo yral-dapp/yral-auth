@@ -9,7 +9,7 @@ thiserror = "1.0.58"
 candid = "0.10.6"
 log = "0.4.21"
 yral-identity = { git = "https://github.com/go-bazzinga/yral-identity.git", default-features = false, rev = "b708569740d0934992a6a7e4d07e60c7cccac7a2" }
-ic-agent = "0.34.0"
+ic-agent = { version = "0.34.0", default-features = false }
 tokio = "1"
 k256 = { version = "0.13.3", features = ["jwk"] }
 
