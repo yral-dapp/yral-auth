@@ -1,0 +1,14 @@
+# Cookie Signing/Encyption key (Hex, length 128 string, WITHOUT `0x` prefix) (required)
+# Generate a random key using `openssl rand -hex 64`
+# This is a secret, avoid using the example value in production
+cookie_key = "1267b291500365c42043e04bc69cf24a31495bd8936fc8d6794283675e288fad755971922d45cf1ca0b438df4fc847f39cb0b2aceb3a45673eff231cddb88dc9"
+
+# Google Client ID (optional, feature = "oauth-google")
+google_client_id = ""
+# Google Client Secret (optional, feature = "oauth-google")
+google_client_secret = "" 
+# Google Login redirect URL (optional, feature = "oauth-google")
+google_redirect_url = "http://127.0.0.1:3000/google_redirect"
+
+# Redis connection url (optional, feature = "redis-kv")
+redis_url = "redis://username:password@localhost:6379"
