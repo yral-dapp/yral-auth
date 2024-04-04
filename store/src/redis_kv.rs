@@ -1,7 +1,7 @@
 use bb8_redis::RedisConnectionManager;
 use redis::{AsyncCommands, RedisError};
 
-use super::{Result, KVStore};
+use super::{KVStore, Result};
 
 #[derive(Clone)]
 pub struct RedisKV(bb8::Pool<RedisConnectionManager>);
@@ -23,7 +23,10 @@ impl KVStore for RedisKV {
         Ok(value)
     }
 
-    async fn read_metadata<T: serde::de::DeserializeOwned + Send + 'static>(&self, key: String) -> Result<Option<T>> {
+    async fn read_metadata<T: serde::de::DeserializeOwned + Send + 'static>(
+        &self,
+        key: String,
+    ) -> Result<Option<T>> {
         let mut con = self.0.get().await?;
         let raw_value: Option<Box<[u8]>> = con.hget(key, METADATA_FIELD).await?;
         let meta = if let Some(meta_raw) = raw_value {
@@ -40,7 +43,11 @@ impl KVStore for RedisKV {
         Ok(())
     }
 
-    async fn write_metdata<T: serde::Serialize + Send + 'static>(&self, key: String, metadata: T) -> Result<()> {
+    async fn write_metdata<T: serde::Serialize + Send + 'static>(
+        &self,
+        key: String,
+        metadata: T,
+    ) -> Result<()> {
         let mut con = self.0.get().await?;
         let meta_raw = serde_json::to_vec(&metadata)?;
         let _replaced: bool = con.hset(key, METADATA_FIELD, meta_raw).await?;

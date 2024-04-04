@@ -4,7 +4,7 @@ use redb::{Database, TableDefinition};
 use serde::{de::DeserializeOwned, Serialize};
 use tokio::task::spawn_blocking;
 
-use super::{Result, KVStore};
+use super::{KVStore, Result};
 
 const TABLE: TableDefinition<&str, &str> = TableDefinition::new("kv");
 const RAW_METADATA_TABLE: TableDefinition<&str, &[u8]> = TableDefinition::new("kv-meta");
@@ -30,7 +30,7 @@ impl ReDBKV {
         R: Send + 'static,
     {
         let db = self.0.clone();
-        spawn_blocking(move || f(&db).map_err(|e| e.into()))
+        spawn_blocking(move || f(&db))
     }
 }
 
@@ -49,7 +49,10 @@ impl KVStore for ReDBKV {
         .unwrap()
     }
 
-    async fn read_metadata<T: DeserializeOwned + Send + 'static>(&self, key: String) -> Result<Option<T>> {
+    async fn read_metadata<T: DeserializeOwned + Send + 'static>(
+        &self,
+        key: String,
+    ) -> Result<Option<T>> {
         self.spawn_blocking(move |db| {
             let read_txn = db.begin_read()?;
             let raw_value = {
@@ -82,7 +85,11 @@ impl KVStore for ReDBKV {
         .unwrap()
     }
 
-    async fn write_metdata<T: Serialize + Send + 'static>(&self, key: String, metadata: T) -> Result<()> {
+    async fn write_metdata<T: Serialize + Send + 'static>(
+        &self,
+        key: String,
+        metadata: T,
+    ) -> Result<()> {
         self.spawn_blocking(move |db| {
             let write_txn = db.begin_write()?;
             {
@@ -97,4 +104,3 @@ impl KVStore for ReDBKV {
         .unwrap()
     }
 }
-

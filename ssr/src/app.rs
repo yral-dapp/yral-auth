@@ -1,4 +1,10 @@
-use crate::{error_template::{AppError, ErrorTemplate}, page::{google_redirect::{GoogleRedirector, GoogleRedirectHandler}, root::LoginRoot}};
+use crate::{
+    error_template::{AppError, ErrorTemplate},
+    page::{
+        google_redirect::{GoogleRedirectHandler, GoogleRedirector},
+        root::LoginRoot,
+    },
+};
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;

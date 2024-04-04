@@ -2,7 +2,7 @@ use axum_extra::extract::{
     cookie::{Cookie, Key, SameSite},
     PrivateCookieJar, SignedCookieJar,
 };
-use ic_agent::{identity::Secp256k1Identity, Identity, export::Principal};
+use ic_agent::{export::Principal, identity::Secp256k1Identity, Identity};
 use leptos::{expect_context, ServerFnError};
 use leptos_axum::{extract_with_state, ResponseOptions};
 use openidconnect::{
@@ -12,8 +12,8 @@ use openidconnect::{
 };
 use web_time::Duration;
 
-use super::{set_cookies, fetch_identity_from_kv, try_extract_identity, update_user_identity};
-use store::{KVStoreImpl, KVStore};
+use super::{fetch_identity_from_kv, set_cookies, try_extract_identity, update_user_identity};
+use store::{KVStore, KVStoreImpl};
 use types::DelegatedIdentityWire;
 
 const PKCE_VERIFIER_COOKIE: &str = "google-pkce-verifier";

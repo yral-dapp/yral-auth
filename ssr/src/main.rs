@@ -1,9 +1,16 @@
-use axum::{extract::{Path, Request, State}, response::{IntoResponse, Response}, routing::get};
+use axum::{
+    extract::{Path, Request, State},
+    response::{IntoResponse, Response},
+    routing::get,
+};
 use leptos::provide_context;
 use leptos_axum::handle_server_fns_with_context;
 use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
-use yral_auth_ssr::{app::App, state::server::{AppConfig, AppState}};
+use yral_auth_ssr::{
+    app::App,
+    state::server::{AppConfig, AppState},
+};
 
 async fn server_fn_handler(
     State(app_state): State<AppState>,
@@ -54,7 +61,8 @@ fn init_cors() -> CorsLayer {
             "http://[::1]:3000",
             "https://yral.com",
             "https://auth.yral.com",
-        ].map(|o| o.parse().unwrap());
+        ]
+        .map(|o| o.parse().unwrap());
 
         CorsLayer::new()
             .allow_credentials(true)
@@ -106,4 +114,3 @@ async fn main() {
         .await
         .unwrap();
 }
-

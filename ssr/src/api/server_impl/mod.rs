@@ -2,16 +2,22 @@
 pub mod google;
 
 use axum::response::IntoResponse;
-use axum_extra::extract::{cookie::{Cookie, Key, SameSite}, SignedCookieJar};
+use axum_extra::extract::{
+    cookie::{Cookie, Key, SameSite},
+    SignedCookieJar,
+};
 use http::header;
-use ic_agent::{export::Principal, identity::{Delegation, Identity, Secp256k1Identity, SignedDelegation}};
+use ic_agent::{
+    export::Principal,
+    identity::{Delegation, Identity, Secp256k1Identity, SignedDelegation},
+};
 use leptos::{expect_context, ServerFnError};
 use leptos_axum::{extract_with_state, ResponseOptions};
+use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use store::{KVStore, KVStoreImpl};
 use types::DelegatedIdentityWire;
 use web_time::{Duration, SystemTime};
-use rand_core::OsRng;
 
 use crate::consts::{DELEGATION_MAX_AGE, REFRESH_MAX_AGE, REFRESH_TOKEN_COOKIE};
 
