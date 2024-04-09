@@ -20,7 +20,10 @@ static GoogleLogo: icondata::Icon = &icondata_core::IconData {
 #[component]
 pub fn GoogleLoginButton() -> impl IntoView {
     view! {
-        <a href="/perform_google_redirect" class="flex flex-row items-center justify-between gap-4 rounded-full bg-neutral-600 pr-4">
+        <a
+            href="/perform_google_redirect"
+            class="flex flex-row items-center justify-between gap-4 rounded-full bg-neutral-600 pr-4"
+        >
             <div class="grid grid-cols-1 place-items-center bg-white p-4 rounded-full">
                 <Icon class="text-xl rounded-full" icon=GoogleLogo/>
             </div>

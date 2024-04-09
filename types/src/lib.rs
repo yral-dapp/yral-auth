@@ -1,12 +1,20 @@
 pub mod error;
 pub mod metadata;
 
+use candid::Principal;
 use error::ApiError;
 use ic_agent::identity::{DelegatedIdentity, Secp256k1Identity, SignedDelegation};
 use k256::elliptic_curve::JwkEcKey;
 use serde::{Deserialize, Serialize};
+use url::Host;
+use web_time::Duration;
+use yral_identity::msg_builder::Message;
 
 pub type ApiResult<T> = Result<T, ApiError>;
+/// Temp identity expiry, 30 minutes
+pub const TEMP_IDENTITY_MAX_AGE: Duration = Duration::from_secs(60 * 30);
+/// Refresh token claim max age, 10 minutes
+pub const REFRESH_TOKEN_CLAIM_MAX_AGE: Duration = Duration::from_secs(60 * 10);
 
 /// Delegated identity that can be serialized over the wire
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -34,3 +42,34 @@ impl TryFrom<DelegatedIdentityWire> for DelegatedIdentity {
         ))
     }
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct LoginIntent {
+    pub referrer_host: Host,
+}
+
+impl From<LoginIntent> for Message {
+    fn from(value: LoginIntent) -> Self {
+        Message::default()
+            .method_name("auth_login".into())
+            .args((value.referrer_host.to_string(),))
+            // unwrap is safe here because (String,) serialization can't fail
+            .unwrap()
+            .ingress_max_age(TEMP_IDENTITY_MAX_AGE)
+    }
+}
+
+#[derive(Clone, Deserialize, Serialize, Debug)]
+pub struct RefreshTokenClaim {
+    pub principal: Principal,
+    pub expiry_epoch: Duration,
+    pub referrer_host: Host,
+}
+
+#[derive(Clone, Deserialize, Serialize, Debug)]
+pub struct SignedRefreshTokenClaim {
+    pub claim: RefreshTokenClaim,
+    pub digest: Vec<u8>,
+}
+
+pub type GoogleAuthMessage = Result<SignedRefreshTokenClaim, String>;

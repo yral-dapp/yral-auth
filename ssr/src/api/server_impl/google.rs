@@ -1,10 +1,10 @@
 use axum_extra::extract::{
     cookie::{Cookie, Key, SameSite},
-    PrivateCookieJar, SignedCookieJar,
+    CookieJar, PrivateCookieJar,
 };
-use ic_agent::{export::Principal, identity::Secp256k1Identity, Identity};
+use ic_agent::export::Principal;
 use leptos::{expect_context, ServerFnError};
-use leptos_axum::{extract_with_state, ResponseOptions};
+use leptos_axum::{extract, extract_with_state, ResponseOptions};
 use openidconnect::{
     core::{CoreAuthenticationFlow, CoreClient, CoreIdTokenVerifier},
     reqwest::async_http_client,
@@ -12,9 +12,11 @@ use openidconnect::{
 };
 use web_time::Duration;
 
-use super::{fetch_identity_from_kv, set_cookies, try_extract_identity, update_user_identity};
+use crate::consts::TEMP_IDENTITY_COOKIE;
+
+use super::{refresh_claim, set_cookies, sign_refresh_claim, TempIdentity};
 use store::{KVStore, KVStoreImpl};
-use types::DelegatedIdentityWire;
+use types::SignedRefreshTokenClaim;
 
 const PKCE_VERIFIER_COOKIE: &str = "google-pkce-verifier";
 const CSRF_TOKEN_COOKIE: &str = "google-csrf-token";
@@ -63,41 +65,33 @@ fn principal_lookup_key(sub_id: &str) -> String {
     format!("google-login-{}", sub_id)
 }
 
-async fn try_extract_identity_from_google_sub(
+async fn try_extract_principal_from_google_sub(
     kv: &KVStoreImpl,
     sub_id: &str,
-) -> Result<Option<Secp256k1Identity>, ServerFnError> {
+) -> Result<Option<Principal>, ServerFnError> {
     let Some(principal_text) = kv.read(principal_lookup_key(sub_id)).await? else {
         return Ok(None);
     };
     let principal = Principal::from_text(principal_text)?;
-    let Some(identity_secret) = fetch_identity_from_kv(kv, principal).await? else {
-        return Ok(None);
-    };
 
-    Ok(Some(Secp256k1Identity::from_private_key(identity_secret)))
+    Ok(Some(principal))
 }
 
-async fn extract_identity_and_associate_with_google_sub(
+async fn associate_principal_with_google_sub(
     kv: &KVStoreImpl,
-    jar: &SignedCookieJar,
+    principal: Principal,
     sub_id: &str,
-) -> Result<Secp256k1Identity, ServerFnError> {
-    let identity_secret = try_extract_identity(jar, kv)
-        .await?
-        .ok_or_else(|| ServerFnError::new("Attempting google login without an identity"))?;
-    let identity = Secp256k1Identity::from_private_key(identity_secret);
-    let principal = identity.sender().unwrap();
+) -> Result<Principal, ServerFnError> {
     kv.write(principal_lookup_key(sub_id), principal.to_text())
         .await?;
 
-    Ok(identity)
+    Ok(principal)
 }
 
 pub async fn perform_google_auth_impl(
     provided_csrf: String,
     auth_code: String,
-) -> Result<DelegatedIdentityWire, ServerFnError> {
+) -> Result<SignedRefreshTokenClaim, ServerFnError> {
     let key: Key = expect_context();
     let mut jar: PrivateCookieJar = extract_with_state(&key).await?;
 
@@ -137,15 +131,24 @@ pub async fn perform_google_auth_impl(
     let sub_id = claims.subject();
 
     let kv: KVStoreImpl = expect_context();
-    let jar: SignedCookieJar = extract_with_state(&key).await?;
-    let identity = if let Some(identity) = try_extract_identity_from_google_sub(&kv, sub_id).await?
-    {
-        identity
-    } else {
-        extract_identity_and_associate_with_google_sub(&kv, &jar, sub_id).await?
-    };
+    let jar: CookieJar = extract().await?;
 
-    let delegated = update_user_identity(&resp, jar, identity).await?;
+    let temp_id_cookie = jar
+        .get(TEMP_IDENTITY_COOKIE)
+        .ok_or_else(|| ServerFnError::new("Attempting google login without a temp identity"))?;
+    let temp_id: TempIdentity = serde_json::from_str(temp_id_cookie.value())?;
+    let principal = temp_id.principal;
+    let host = temp_id.referrer_host.clone();
+    temp_id.validate()?;
 
-    Ok(delegated)
+    let principal =
+        if let Some(identity) = try_extract_principal_from_google_sub(&kv, sub_id).await? {
+            identity
+        } else {
+            associate_principal_with_google_sub(&kv, principal, sub_id).await?
+        };
+    let claim = refresh_claim(principal, host);
+    let s_claim = sign_refresh_claim(claim, &key)?;
+
+    Ok(s_claim)
 }

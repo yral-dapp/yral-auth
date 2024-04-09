@@ -12,6 +12,8 @@ yral-identity = { git = "https://github.com/go-bazzinga/yral-identity.git", defa
 ic-agent = { version = "0.34.0", default-features = false }
 tokio = "1"
 k256 = { version = "0.13.3", features = ["jwk"] }
+web-time = "1.1.0"
+url = { version = "2", features = ["serde"] }
 
 # Defines a size-optimized profile for the WASM bundle in release mode
 [profile.wasm-release]

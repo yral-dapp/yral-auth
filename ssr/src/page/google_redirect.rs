@@ -2,9 +2,7 @@ use leptos::*;
 use leptos_router::*;
 use serde::{Deserialize, Serialize};
 
-use types::DelegatedIdentityWire;
-
-pub type GoogleAuthMessage = Result<DelegatedIdentityWire, String>;
+use types::{GoogleAuthMessage, SignedRefreshTokenClaim};
 
 #[server]
 async fn google_auth_redirector() -> Result<(), ServerFnError> {
@@ -15,7 +13,7 @@ async fn google_auth_redirector() -> Result<(), ServerFnError> {
 }
 
 #[server]
-async fn perform_google_auth(oauth: OAuthQuery) -> Result<DelegatedIdentityWire, ServerFnError> {
+async fn perform_google_auth(oauth: OAuthQuery) -> Result<SignedRefreshTokenClaim, ServerFnError> {
     use crate::api::server_impl::google::perform_google_auth_impl;
     perform_google_auth_impl(oauth.state, oauth.code).await
 }
@@ -84,6 +82,7 @@ pub fn GoogleRedirectHandler() -> impl IntoView {
             {move || {
                 identity_resource().map(|identity_res| view! { <IdentitySender identity_res/> })
             }}
+
         </Suspense>
     }
 }

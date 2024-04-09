@@ -33,10 +33,12 @@ types = { package = "yral-auth-types", path = "../types" }
 ic-agent = { workspace = true, default-features = false }
 k256.workspace = true
 rand_core = { version = "0.6.4", optional = true }
-web-time = "1.1.0"
+web-time.workspace = true
 leptos_icons = "0.3.0"
 icondata = "0.3.0"
 icondata_core = "0.1.0"
+url = "2.5.0"
+hmac = { version = "0.12.1", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate", "ic-agent/wasm-bindgen"]
@@ -56,7 +58,8 @@ ssr = [
     "dep:openidconnect",
     "dep:serde_with",
     "dep:figment",
-    "dep:rand_core"
+    "dep:rand_core",
+    "dep:hmac",
 ]
 redis-kv = []
 oauth = []

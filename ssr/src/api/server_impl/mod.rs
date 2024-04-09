@@ -6,18 +6,24 @@ use axum_extra::extract::{
     cookie::{Cookie, Key, SameSite},
     SignedCookieJar,
 };
-use http::header;
+use hmac::{Hmac, Mac};
+use http::{header, HeaderMap};
 use ic_agent::{
     export::Principal,
     identity::{Delegation, Identity, Secp256k1Identity, SignedDelegation},
 };
+use k256::sha2::Sha256;
 use leptos::{expect_context, ServerFnError};
-use leptos_axum::{extract_with_state, ResponseOptions};
+use leptos_axum::{extract, extract_with_state, ResponseOptions};
 use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use store::{KVStore, KVStoreImpl};
-use types::DelegatedIdentityWire;
+use types::{
+    DelegatedIdentityWire, LoginIntent, RefreshTokenClaim, SignedRefreshTokenClaim,
+    REFRESH_TOKEN_CLAIM_MAX_AGE,
+};
 use web_time::{Duration, SystemTime};
+use yral_identity::{msg_builder::Message, Signature};
 
 use crate::consts::{DELEGATION_MAX_AGE, REFRESH_MAX_AGE, REFRESH_TOKEN_COOKIE};
 
@@ -50,7 +56,24 @@ pub fn delegate_identity(from: &impl Identity) -> DelegatedIdentityWire {
     }
 }
 
-fn set_cookies(resp: &ResponseOptions, jar: impl IntoResponse) {
+#[derive(Serialize, Deserialize, Clone)]
+pub struct TempIdentity {
+    pub principal: Principal,
+    pub signature: Signature,
+    pub referrer_host: url::Host,
+}
+
+impl TempIdentity {
+    pub fn validate(self) -> Result<(), yral_identity::Error> {
+        let intent = LoginIntent {
+            referrer_host: self.referrer_host,
+        };
+        let msg: Message = intent.into();
+        self.signature.verify_identity(self.principal, msg)
+    }
+}
+
+pub fn set_cookies(resp: &ResponseOptions, jar: impl IntoResponse) {
     let resp_jar = jar.into_response();
     for cookie in resp_jar
         .headers()
@@ -60,6 +83,51 @@ fn set_cookies(resp: &ResponseOptions, jar: impl IntoResponse) {
     {
         resp.append_header(header::SET_COOKIE, cookie);
     }
+}
+
+fn refresh_claim(principal: Principal, referrer_host: url::Host) -> RefreshTokenClaim {
+    RefreshTokenClaim {
+        principal,
+        expiry_epoch: current_epoch() + REFRESH_TOKEN_CLAIM_MAX_AGE,
+        referrer_host,
+    }
+}
+
+fn sign_refresh_claim(
+    claim: RefreshTokenClaim,
+    key: &Key,
+) -> Result<SignedRefreshTokenClaim, ServerFnError> {
+    let signing_key = key.signing();
+    let raw = serde_json::to_vec(&claim)?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(signing_key)?;
+    mac.update(&raw);
+
+    let digest = mac.finalize().into_bytes();
+    Ok(SignedRefreshTokenClaim {
+        claim,
+        digest: digest.to_vec(),
+    })
+}
+
+fn verify_refresh_claim(
+    s_claim: SignedRefreshTokenClaim,
+    referrer_host: url::Host,
+    key: &Key,
+) -> Result<Principal, ServerFnError> {
+    let claim = s_claim.claim;
+    if claim.expiry_epoch < current_epoch() {
+        return Err(ServerFnError::new("Expired token"));
+    }
+    if claim.referrer_host != referrer_host {
+        return Err(ServerFnError::new("Invalid referrer"));
+    }
+
+    let mut mac = Hmac::<Sha256>::new_from_slice(key.signing())?;
+    let raw_claim = serde_json::to_vec(&claim)?;
+    mac.update(&raw_claim);
+    mac.verify_slice(&s_claim.digest)?;
+
+    Ok(claim.principal)
 }
 
 #[derive(Clone, Copy, Deserialize, Serialize)]
@@ -162,5 +230,34 @@ pub async fn logout_identity_impl() -> Result<DelegatedIdentityWire, ServerFnErr
 
     let resp: ResponseOptions = expect_context();
     let delegated = update_user_identity(&resp, jar, base_identity).await?;
+    Ok(delegated)
+}
+
+pub async fn upgrade_refresh_claim_impl(
+    s_claim: SignedRefreshTokenClaim,
+) -> Result<DelegatedIdentityWire, ServerFnError> {
+    let key: Key = expect_context();
+    let kv: KVStoreImpl = expect_context();
+    let jar: SignedCookieJar = extract_with_state(&key).await?;
+    let resp: ResponseOptions = expect_context();
+
+    let headers: HeaderMap = extract().await?;
+    let referrer_raw = headers
+        .get(header::REFERER)
+        .ok_or_else(|| ServerFnError::new("No referrer"))?
+        .to_str()?;
+    let referrer = url::Url::parse(referrer_raw)?;
+    let host = referrer
+        .host()
+        .ok_or_else(|| ServerFnError::new("No referrer host"))?
+        .to_owned();
+
+    let principal = verify_refresh_claim(s_claim, host, &key)?;
+    let sk = fetch_identity_from_kv(&kv, principal)
+        .await?
+        .ok_or_else(|| ServerFnError::new("No identity found"))?;
+
+    let delegated =
+        update_user_identity(&resp, jar, Secp256k1Identity::from_private_key(sk)).await?;
     Ok(delegated)
 }

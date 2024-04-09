@@ -5596,6 +5596,7 @@ dependencies = [
  "axum-extra",
  "console_error_panic_hook",
  "figment",
+ "hmac",
  "http 1.1.0",
  "ic-agent",
  "icondata",
@@ -5617,6 +5618,7 @@ dependencies = [
  "tower",
  "tower-http",
  "tracing",
+ "url",
  "wasm-bindgen",
  "web-time",
  "yral-auth-store",
@@ -5648,6 +5650,8 @@ dependencies = [
  "k256",
  "serde",
  "thiserror",
+ "url",
+ "web-time",
  "yral-identity",
 ]
 

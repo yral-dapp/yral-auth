@@ -12,3 +12,5 @@ thiserror.workspace = true
 yral-identity = { workspace = true, default-features = false }
 ic-agent = { workspace = true, default-features = false }
 k256.workspace = true 
+web-time.workspace = true
+url.workspace = true
