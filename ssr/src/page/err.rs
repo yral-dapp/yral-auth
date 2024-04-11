@@ -54,7 +54,7 @@ pub fn ServerErrorPage() -> impl IntoView {
         <div class="flex flex-col w-screen h-screen justify-center items-center bg-black gap-4 text-center">
             <img class="h-36 w-36" src="/img/logo.webp"/>
             <h1 class="text-2xl text-white">"Something isn't right :("</h1>
-            <h3 class="text-lg text-white/60">{error()}</h3>
+            <h3 class="text-lg text-white/60">{error}</h3>
         </div>
     }
 }
