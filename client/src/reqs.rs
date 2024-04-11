@@ -18,3 +18,6 @@ pub struct SetUserMetadataReqW {
 pub struct GetUserMetadataReqW {
     pub req: GetUserMetadataReq,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct EmptyReq {}

@@ -6,7 +6,7 @@ pub use types;
 use consts::DEFAULT_AUTH_URL;
 pub use error::*;
 use ic_agent::{export::Principal, Identity};
-use reqs::{GetUserMetadataReqW, SetUserMetadataReqW, UpgradeRefreshClaimReq};
+use reqs::{EmptyReq, GetUserMetadataReqW, SetUserMetadataReqW, UpgradeRefreshClaimReq};
 use reqwest::Url;
 use serde::{de::DeserializeOwned, Serialize};
 use types::{
@@ -46,6 +46,16 @@ impl AuthClient {
             .client
             .post(self.base_url.join("api/").unwrap().join(path).unwrap())
             .json(&body);
+        let req = {
+            #[cfg(target_arch = "wasm32")]
+            {
+                req.fetch_credentials_include()
+            }
+            #[cfg(not(target_arch = "wasm32"))]
+            {
+                req
+            }
+        };
         let res = req.send().await?;
         if !res.status().is_success() {
             return Err(Error::Api(res.json().await?));
@@ -55,11 +65,11 @@ impl AuthClient {
     }
 
     pub async fn extract_or_generate_identity(&self) -> Result<DelegatedIdentityWire> {
-        self.send_req("extract_or_generate", ()).await
+        self.send_req("extract_or_generate", EmptyReq {}).await
     }
 
     pub async fn logout_identity(&self) -> Result<DelegatedIdentityWire> {
-        self.send_req("logout", ()).await
+        self.send_req("logout", EmptyReq {}).await
     }
 
     pub async fn upgrade_refresh_token_claim(
