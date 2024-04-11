@@ -44,7 +44,7 @@ impl AuthClient {
     async fn send_req<R: DeserializeOwned>(&self, path: &str, body: impl Serialize) -> Result<R> {
         let req = self
             .client
-            .post(self.base_url.join("api").unwrap().join(path).unwrap())
+            .post(self.base_url.join("api/").unwrap().join(path).unwrap())
             .json(&body);
         let res = req.send().await?;
         if !res.status().is_success() {
