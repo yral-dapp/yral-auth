@@ -19,12 +19,12 @@ use types::{
 use yral_identity::ic_agent::sign_message;
 
 #[derive(Clone, Debug)]
-pub struct MetadataClient {
+pub struct AuthClient {
     base_url: Url,
     client: reqwest::Client,
 }
 
-impl Default for MetadataClient {
+impl Default for AuthClient {
     fn default() -> Self {
         Self {
             base_url: Url::parse(DEFAULT_AUTH_URL).unwrap(),
@@ -33,7 +33,7 @@ impl Default for MetadataClient {
     }
 }
 
-impl MetadataClient {
+impl AuthClient {
     pub fn with_base_url(base_url: Url) -> Self {
         Self {
             base_url,
