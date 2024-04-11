@@ -33,7 +33,6 @@ pub fn IdentitySender(identity_res: GoogleAuthMessage) -> impl IntoView {
             use web_sys::Window;
 
             let win = window();
-            let origin = win.origin();
             let opener = win.opener().unwrap();
             if opener.is_null() {
                 let nav = use_navigate();
@@ -42,7 +41,7 @@ pub fn IdentitySender(identity_res: GoogleAuthMessage) -> impl IntoView {
             }
             let opener = Window::from(opener);
             let msg = serde_json::to_string(&_id).unwrap();
-            _ = opener.post_message(&msg.into(), &origin);
+            _ = opener.post_message(&msg.into(), "*");
         }
     });
 

@@ -50,7 +50,7 @@ async fn leptos_routes_handler(
 }
 
 fn init_cors() -> CorsLayer {
-    use http::{Method, header};
+    use http::{header, Method};
 
     let origins = [
         "http://localhost:3000",
@@ -70,7 +70,12 @@ fn init_cors() -> CorsLayer {
     CorsLayer::new()
         .allow_credentials(true)
         .allow_origin(origins)
-        .allow_headers([header::ORIGIN, header::ACCEPT, header::CONTENT_TYPE, header::USER_AGENT])
+        .allow_headers([
+            header::ORIGIN,
+            header::ACCEPT,
+            header::CONTENT_TYPE,
+            header::USER_AGENT,
+        ])
         .allow_methods([Method::POST, Method::GET, Method::OPTIONS])
 }
 
