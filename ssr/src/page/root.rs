@@ -60,7 +60,7 @@ struct RootParams {
 
 #[component]
 pub fn RootPage() -> impl IntoView {
-    let params = use_params::<RootParams>();
+    let params = use_query::<RootParams>();
     let prepare_cookie_res = create_blocking_resource(params, |params| async move {
         let Ok(params) = params else {
             return Err("Invalid Params".to_string());
