@@ -4490,9 +4490,9 @@ dependencies = [
 
 [[package]]
 name = "server_fn"
-version = "0.6.10"
+version = "0.6.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15a46a2ffdecb81430ecfb995989218a18b6e94c1ead50cb806b5927c986a8ce"
+checksum = "536a5b959673643ee01e59ae41bf01425482c8070dee95d7061ee2d45296b59c"
 dependencies = [
  "axum",
  "bytes",
@@ -5584,7 +5584,11 @@ version = "0.1.0"
 dependencies = [
  "ic-agent",
  "reqwest 0.12.2",
+ "serde",
+ "serde_json",
+ "server_fn",
  "thiserror",
+ "url",
  "yral-auth-types",
  "yral-identity",
 ]
