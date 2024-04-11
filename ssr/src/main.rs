@@ -50,29 +50,28 @@ async fn leptos_routes_handler(
 }
 
 fn init_cors() -> CorsLayer {
-    #[cfg(feature = "strict-cors")]
-    {
-        use http::Method;
+    use http::{Method, header};
 
-        let origins = [
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://0.0.0.0:3000",
-            "http://[::1]:3000",
-            "https://yral.com",
-            "https://auth.yral.com",
-        ]
-        .map(|o| o.parse().unwrap());
+    let origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://0.0.0.0:3000",
+        "http://[::1]:3000",
+        "http://0.0.0.0:3002",
+        "http://localhost:3002",
+        "http://127.0.0.1:3002",
+        "http://[::1]:3002",
+        "https://yral.com",
+        "https://auth.yral.com",
+        "https://yral-auth.fly.dev",
+    ]
+    .map(|o| o.parse().unwrap());
 
-        CorsLayer::new()
-            .allow_credentials(true)
-            .allow_origin(origins)
-            .allow_methods([Method::POST, Method::GET, Method::OPTIONS])
-    }
-    #[cfg(not(feature = "strict-cors"))]
-    {
-        CorsLayer::permissive()
-    }
+    CorsLayer::new()
+        .allow_credentials(true)
+        .allow_origin(origins)
+        .allow_headers([header::ORIGIN, header::ACCEPT, header::CONTENT_TYPE, header::USER_AGENT])
+        .allow_methods([Method::POST, Method::GET, Method::OPTIONS])
 }
 
 #[tokio::main]

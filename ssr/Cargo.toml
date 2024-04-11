@@ -64,7 +64,6 @@ ssr = [
 redis-kv = []
 oauth = []
 oauth-google = ["oauth"]
-strict-cors = []
 release-bin = ["ssr", "redis-kv", "oauth-google"]
 release-lib = ["hydrate", "oauth-google"]
 
