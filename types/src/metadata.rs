@@ -18,7 +18,7 @@ impl From<UserMetadata> for Message {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct SetUserMetadataReq {
     pub user_principal: Principal,
     pub metadata: UserMetadata,
@@ -26,5 +26,10 @@ pub struct SetUserMetadataReq {
 }
 
 pub type SetUserMetadataRes = ();
+
+#[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct GetUserMetadataReq {
+    pub user_principal: Principal,
+}
 
 pub type GetUserMetadataRes = Option<UserMetadata>;

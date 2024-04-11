@@ -19,8 +19,8 @@ use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use store::{KVStore, KVStoreImpl};
 use types::{
-    DelegatedIdentityWire, LoginIntent, RefreshTokenClaim, SignedRefreshTokenClaim,
-    REFRESH_TOKEN_CLAIM_MAX_AGE,
+    metadata::{GetUserMetadataReq, GetUserMetadataRes, SetUserMetadataReq, SetUserMetadataRes},
+    DelegatedIdentityWire, LoginIntent, SignedRefreshTokenClaim,
 };
 use web_time::{Duration, SystemTime};
 use yral_identity::{msg_builder::Message, Signature};
@@ -85,25 +85,29 @@ pub fn set_cookies(resp: &ResponseOptions, jar: impl IntoResponse) {
     }
 }
 
-fn refresh_claim(principal: Principal, referrer_host: url::Host) -> RefreshTokenClaim {
-    RefreshTokenClaim {
+#[cfg(feature = "oauth")]
+fn refresh_claim(principal: Principal, referrer_host: url::Host) -> types::RefreshTokenClaim {
+    use types::REFRESH_TOKEN_CLAIM_MAX_AGE;
+
+    types::RefreshTokenClaim {
         principal,
         expiry_epoch: current_epoch() + REFRESH_TOKEN_CLAIM_MAX_AGE,
         referrer_host,
     }
 }
 
+#[cfg(feature = "oauth")]
 fn sign_refresh_claim(
-    claim: RefreshTokenClaim,
+    claim: types::RefreshTokenClaim,
     key: &Key,
-) -> Result<SignedRefreshTokenClaim, ServerFnError> {
+) -> Result<types::SignedRefreshTokenClaim, ServerFnError> {
     let signing_key = key.signing();
     let raw = serde_json::to_vec(&claim)?;
     let mut mac = Hmac::<Sha256>::new_from_slice(signing_key)?;
     mac.update(&raw);
 
     let digest = mac.finalize().into_bytes();
-    Ok(SignedRefreshTokenClaim {
+    Ok(types::SignedRefreshTokenClaim {
         claim,
         digest: digest.to_vec(),
     })
@@ -260,4 +264,29 @@ pub async fn upgrade_refresh_claim_impl(
     let delegated =
         update_user_identity(&resp, jar, Secp256k1Identity::from_private_key(sk)).await?;
     Ok(delegated)
+}
+
+pub async fn set_user_metadata_impl(
+    req: SetUserMetadataReq,
+) -> Result<SetUserMetadataRes, ServerFnError> {
+    let signature = req.signature;
+    let metadata = req.metadata;
+    let user_principal = req.user_principal;
+    signature.verify_identity(user_principal, metadata.clone().into())?;
+
+    let user = user_principal.to_text();
+    let kv: KVStoreImpl = expect_context();
+    kv.write_metdata(user, metadata).await?;
+
+    Ok(())
+}
+
+pub async fn get_user_metadata_impl(
+    req: GetUserMetadataReq,
+) -> Result<GetUserMetadataRes, ServerFnError> {
+    let user = req.user_principal.to_text();
+    let kv: KVStoreImpl = expect_context();
+    let metadata = kv.read_metadata(user).await?;
+
+    Ok(metadata)
 }

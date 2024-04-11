@@ -1,8 +1,6 @@
-pub mod error;
 pub mod metadata;
 
 use candid::Principal;
-use error::ApiError;
 use ic_agent::identity::{DelegatedIdentity, Secp256k1Identity, SignedDelegation};
 use k256::elliptic_curve::JwkEcKey;
 use serde::{Deserialize, Serialize};
@@ -10,7 +8,6 @@ use url::Host;
 use web_time::Duration;
 use yral_identity::msg_builder::Message;
 
-pub type ApiResult<T> = Result<T, ApiError>;
 /// Temp identity expiry, 30 minutes
 pub const TEMP_IDENTITY_MAX_AGE: Duration = Duration::from_secs(60 * 30);
 /// Refresh token claim max age, 10 minutes

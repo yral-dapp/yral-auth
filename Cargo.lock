@@ -476,18 +476,6 @@ checksum = "514de17de45fdb8dc022b1a7975556c53c86f9f0aa5f534b98977b171857c2c9"
 
 [[package]]
 name = "cached"
-version = "0.41.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec6d20b3d24b6c74e2c5331d2d3d8d1976a9883c7da179aa851afa4c90d62e36"
-dependencies = [
- "hashbrown 0.12.3",
- "instant",
- "once_cell",
- "thiserror",
-]
-
-[[package]]
-name = "cached"
 version = "0.45.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90eb5776f28a149524d1d8623035760b4454ec881e8cf3838fa8d7e1b11254b3"
@@ -507,6 +495,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7c8c50262271cdf5abc979a5f76515c234e764fa025d1ba4862c0f0bcda0e95"
 dependencies = [
  "ahash",
+ "hashbrown 0.14.3",
+ "instant",
+ "once_cell",
+ "thiserror",
+]
+
+[[package]]
+name = "cached"
+version = "0.49.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e8e463fceca5674287f32d252fb1d94083758b8709c160efae66d263e5f4eba"
+dependencies = [
  "hashbrown 0.14.3",
  "instant",
  "once_cell",
@@ -1056,7 +1056,7 @@ dependencies = [
 [[package]]
 name = "dfn_core"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-base-types",
  "on_wire",
@@ -1870,7 +1870,7 @@ dependencies = [
 [[package]]
 name = "ic-base-types"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "byte-unit",
  "bytes",
@@ -1896,7 +1896,7 @@ dependencies = [
 [[package]]
 name = "ic-btc-types-internal"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "candid",
  "ic-btc-interface",
@@ -1909,7 +1909,7 @@ dependencies = [
 [[package]]
 name = "ic-certification"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "hex",
  "ic-crypto-tree-hash",
@@ -1936,12 +1936,12 @@ dependencies = [
 [[package]]
 name = "ic-constants"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 
 [[package]]
 name = "ic-crypto-ecdsa-secp256k1"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "k256",
  "lazy_static",
@@ -1955,7 +1955,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-ecdsa-secp256r1"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "lazy_static",
  "num-bigint",
@@ -1970,7 +1970,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-iccsa"
 version = "0.1.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-crypto-internal-basic-sig-iccsa",
 ]
@@ -1978,7 +1978,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-interfaces-sig-verification"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-types",
 ]
@@ -1986,7 +1986,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-cose"
 version = "0.1.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-crypto-internal-basic-sig-der-utils",
  "ic-crypto-internal-basic-sig-ecdsa-secp256r1",
@@ -2000,7 +2000,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-der-utils"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "hex",
  "ic-types",
@@ -2010,7 +2010,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-ecdsa-secp256k1"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "ic-crypto-ecdsa-secp256k1",
@@ -2027,7 +2027,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-ecdsa-secp256r1"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "ic-crypto-ecdsa-secp256r1",
@@ -2046,7 +2046,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-ed25519"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "curve25519-dalek",
@@ -2068,7 +2068,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-iccsa"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "hex",
@@ -2087,7 +2087,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-basic-sig-rsa-pkcs1"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-crypto-internal-basic-sig-der-utils",
  "ic-crypto-sha2",
@@ -2104,7 +2104,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-bls12-381-type"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "hex",
  "ic_bls12_381",
@@ -2122,7 +2122,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-seed"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "hex",
  "ic-crypto-sha2",
@@ -2135,7 +2135,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-sha2"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "sha2 0.10.8",
 ]
@@ -2143,10 +2143,10 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-threshold-sig-bls12381"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
- "cached 0.41.0",
+ "cached 0.49.3",
  "hex",
  "ic-crypto-internal-bls12-381-type",
  "ic-crypto-internal-seed",
@@ -2169,7 +2169,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-internal-types"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "arrayvec 0.7.4",
  "hex",
@@ -2186,7 +2186,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-secrets-containers"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "serde",
  "zeroize",
@@ -2195,7 +2195,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-sha2"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-crypto-internal-sha2",
 ]
@@ -2203,7 +2203,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-standalone-sig-verifier"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-crypto-iccsa",
  "ic-crypto-internal-basic-sig-cose",
@@ -2220,7 +2220,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-tree-hash"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "assert_matches",
  "ic-crypto-internal-types",
@@ -2234,7 +2234,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-utils-threshold-sig"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "ic-crypto-internal-threshold-sig-bls12381",
@@ -2245,7 +2245,7 @@ dependencies = [
 [[package]]
 name = "ic-crypto-utils-threshold-sig-der"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "ic-crypto-internal-types",
@@ -2256,8 +2256,9 @@ dependencies = [
 [[package]]
 name = "ic-error-types"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
+ "ic-protobuf",
  "ic-utils",
  "serde",
  "strum",
@@ -2267,7 +2268,7 @@ dependencies = [
 [[package]]
 name = "ic-management-canister-types"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "candid",
  "ic-base-types",
@@ -2286,7 +2287,7 @@ dependencies = [
 [[package]]
 name = "ic-protobuf"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "bincode",
  "candid",
@@ -2318,7 +2319,7 @@ dependencies = [
 [[package]]
 name = "ic-types"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "bincode",
@@ -2354,7 +2355,7 @@ dependencies = [
 [[package]]
 name = "ic-utils"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "hex",
  "prost",
@@ -2365,7 +2366,7 @@ dependencies = [
 [[package]]
 name = "ic-validator"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "hex",
  "ic-constants",
@@ -2380,7 +2381,7 @@ dependencies = [
 [[package]]
 name = "ic-validator-ingress-message"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "base64 0.13.1",
  "dfn_core",
@@ -3316,7 +3317,7 @@ dependencies = [
 [[package]]
 name = "on_wire"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 
 [[package]]
 name = "once_cell"
@@ -3539,7 +3540,7 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 [[package]]
 name = "phantom_newtype"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "candid",
  "serde",
@@ -5072,7 +5073,7 @@ dependencies = [
 [[package]]
 name = "tree-deserializer"
 version = "0.9.0"
-source = "git+https://github.com/go-bazzinga/ic.git?rev=efca3740d1269e5d840aecadc88a98ef1e860612#efca3740d1269e5d840aecadc88a98ef1e860612"
+source = "git+https://github.com/dfinity/ic.git?rev=2257f803fb4b49505b31828dd9c6ae587c07069c#2257f803fb4b49505b31828dd9c6ae587c07069c"
 dependencies = [
  "ic-crypto-tree-hash",
  "leb128",
@@ -5658,7 +5659,7 @@ dependencies = [
 [[package]]
 name = "yral-identity"
 version = "0.1.0"
-source = "git+https://github.com/go-bazzinga/yral-identity.git?rev=b708569740d0934992a6a7e4d07e60c7cccac7a2#b708569740d0934992a6a7e4d07e60c7cccac7a2"
+source = "git+https://github.com/go-bazzinga/yral-identity.git?rev=735fec69ac2e27ac5bf2ce670e935ab78a524128#735fec69ac2e27ac5bf2ce670e935ab78a524128"
 dependencies = [
  "candid",
  "ic-agent",
