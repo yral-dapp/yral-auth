@@ -3,8 +3,6 @@ use leptos::*;
 use leptos_router::*;
 use serde::{Deserialize, Serialize};
 
-use crate::try_or_redirect_opt;
-
 #[server]
 async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
     use crate::api::server_impl::{set_cookies, TempIdentity};
@@ -56,39 +54,33 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
 #[derive(Params, PartialEq, Clone, Debug, Serialize, Deserialize)]
 struct RootParams {
     principal: Principal,
+    /// Signature over [types::LoginIntent]
     signature_json: String,
 }
 
 #[component]
-pub fn LoginRoot() -> impl IntoView {
+pub fn RootPage() -> impl IntoView {
     let params = use_params::<RootParams>();
     let prepare_cookie_res = create_blocking_resource(params, |params| async move {
-        let params = try_or_redirect_opt!(params.map_err(|_| "Invalid Params"));
-        try_or_redirect_opt!(prepare_cookies(params).await);
-        Some(())
+        let Ok(params) = params else {
+            return Err("Invalid Params".to_string());
+        };
+        if let Err(e) = prepare_cookies(params).await {
+            return Err(e.to_string());
+        }
+        Ok(())
     });
 
     view! {
         <Suspense>
             {move || {
                 prepare_cookie_res()
-                    .map(|_| {
-                        view! {
-                            <div class="h-dvh w-dvw bg-black flex flex-col justify-center items-center gap-10">
-                                <h1 class="text-3xl text-white font-bold">Login to Yral</h1>
-                                <img class="h-56 w-56 object-contain my-8" src="/img/logo.webp"/>
-                                <p class="text-white text-xl">Continue with</p>
-                                <div class="flex w-full justify-center gap-8">
-
-                                    {#[cfg(feature = "oauth-google")]
-                                    {
-                                        use crate::auth_providers::google::GoogleLoginButton;
-                                        view! { <GoogleLoginButton/> }
-                                    }}
-
-                                </div>
-                            </div>
-                        }
+                    .map(|res| {
+                        let url = match res {
+                            Ok(_) => "/login".to_string(),
+                            Err(e) => format!("/error?err={e}"),
+                        };
+                        view! { <Redirect path=url/> }
                     })
             }}
 

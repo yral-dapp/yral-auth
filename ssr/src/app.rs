@@ -1,6 +1,6 @@
 use crate::{
     error_template::{AppError, ErrorTemplate},
-    page::{err::ServerErrorPage, root::LoginRoot},
+    page::{err::ServerErrorPage, login::LoginPage, root::RootPage},
 };
 use leptos::*;
 use leptos_meta::*;
@@ -56,7 +56,8 @@ pub fn App() -> impl IntoView {
         <Router fallback=|| view! { <NotFound/> }.into_view()>
             <main>
                 <Routes>
-                    <Route path="" view=LoginRoot/>
+                    <Route path="" view=RootPage/>
+                    <Route path="/login" view=LoginPage/>
                     <GoogleAuthRedirectHandlerRoute/>
                     <GoogleAuthRedirectorRoute/>
                     <Route path="/error" view=ServerErrorPage/>

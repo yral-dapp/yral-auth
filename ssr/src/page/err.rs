@@ -43,7 +43,7 @@ struct ServerErrParams {
 
 #[component]
 pub fn ServerErrorPage() -> impl IntoView {
-    let params = use_params::<ServerErrParams>();
+    let params = use_query::<ServerErrParams>();
     let error = move || {
         params()
             .map(|p| p.err)
@@ -51,9 +51,10 @@ pub fn ServerErrorPage() -> impl IntoView {
     };
 
     view! {
-        <div class="w-screen h-screen justify-center align-center bg-black gap-4 text-white text-center">
-            <h1 class="text-2xl">"Something isn't right"</h1>
-            <h3 class="text-lg">{error()}</h3>
+        <div class="flex flex-col w-screen h-screen justify-center items-center bg-black gap-4 text-center">
+            <img class="h-36 w-36" src="/img/logo.webp"/>
+            <h1 class="text-2xl text-white">"Something isn't right :("</h1>
+            <h3 class="text-lg text-white/60">{error()}</h3>
         </div>
     }
 }
