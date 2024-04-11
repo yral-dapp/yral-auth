@@ -8,8 +8,8 @@ use url::Host;
 use web_time::Duration;
 use yral_identity::msg_builder::Message;
 
-/// Temp identity expiry, 30 minutes
-pub const TEMP_IDENTITY_MAX_AGE: Duration = Duration::from_secs(60 * 30);
+/// Temp identity expiry, 5 minutes
+pub const TEMP_IDENTITY_MAX_AGE: Duration = Duration::from_secs(60 * 5);
 /// Refresh token claim max age, 10 minutes
 pub const REFRESH_TOKEN_CLAIM_MAX_AGE: Duration = Duration::from_secs(60 * 10);
 
