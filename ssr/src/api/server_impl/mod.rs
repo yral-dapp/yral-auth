@@ -201,6 +201,7 @@ pub async fn update_user_identity(
         .secure(true)
         .path("/")
         .same_site(SameSite::None)
+        .partitioned(true)
         .max_age(refresh_max_age.try_into().unwrap());
 
     jar = jar.add(refresh_cookie);
