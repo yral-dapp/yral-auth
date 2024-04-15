@@ -1,0 +1,15 @@
+fly.toml
+Dockerfile
+.dockerignore
+**/node_modules
+**/test-results
+**/end2end/playwright-report
+**/playwright/.cache
+.git
+config.toml
+.env
+redb-kv.db
+/target/
+!/target/x86_64-unknown-linux-musl/release/yral-auth-ssr
+!/target/release/hash.txt
+!/target/site

@@ -1,0 +1,24 @@
+# fly.toml app configuration file generated for yral-auth on 2024-04-15T18:15:04+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'yral-auth'
+primary_region = 'sin'
+
+[build]
+
+[env]
+  GOOGLE_REDIRECT_URL = "https://yral-auth.fly.dev/google_redirect"
+  GOOGLE_CLIENT_ID = "804814798298-gckvp3hv9sskee5c646b7794k8qolsd7.apps.googleusercontent.com"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-2x'

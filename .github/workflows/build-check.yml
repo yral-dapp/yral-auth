@@ -27,7 +27,7 @@ jobs:
 
       - uses: cargo-bins/cargo-binstall@main
       - name: cargo-leptos setup
-        run: cargo binstall --no-confirm cargo-leptos --version 0.2.16
+        run: cargo binstall --no-confirm cargo-leptos --version 0.2.17
 
       - name: Cache rust dependencies and build output
         uses: Swatinem/rust-cache@v2
@@ -80,7 +80,7 @@ jobs:
         with:
           name: build-musl
           path: |
-            target/x86_64-unknown-linux-musl/release/hot-or-not-web-leptos-ssr
+            target/x86_64-unknown-linux-musl/release/yral-auth-ssr
             target/release/hash.txt
             target/site
             .empty
