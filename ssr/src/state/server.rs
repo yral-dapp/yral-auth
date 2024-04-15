@@ -80,7 +80,7 @@ impl AppState {
 pub struct AppConfig {
     #[cfg_attr(not(feature = "release-bin"), serde(default = "fallback_cookie_key"))]
     #[serde_as(as = "serde_with::hex::Hex")]
-    cookie_key: [u8; 64],
+    cookie_key: Vec<u8>,
     #[cfg(feature = "oauth-google")]
     google_client_id: String,
     #[cfg(feature = "oauth-google")]
@@ -92,9 +92,9 @@ pub struct AppConfig {
 }
 
 #[cfg(not(feature = "release-bin"))]
-fn fallback_cookie_key() -> [u8; 64] {
+fn fallback_cookie_key() -> Vec<u8> {
     log::warn!("using fallback cookie key");
-    [
+    vec![
         18, 103, 178, 145, 80, 3, 101, 196, 32, 67, 224, 75, 198, 156, 242, 74, 49, 73, 91, 216,
         147, 111, 200, 214, 121, 66, 131, 103, 94, 40, 143, 173, 117, 89, 113, 146, 45, 69, 207,
         28, 160, 180, 56, 223, 79, 200, 71, 243, 156, 176, 178, 172, 235, 58, 69, 103, 62, 255, 35,
