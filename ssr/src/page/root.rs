@@ -40,7 +40,7 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
         .http_only(true)
         .secure(true)
         .path("/")
-        .same_site(SameSite::Strict)
+        .same_site(SameSite::Lax)
         .max_age(TEMP_IDENTITY_MAX_AGE.try_into().unwrap());
 
     let mut jar: CookieJar = extract().await?;

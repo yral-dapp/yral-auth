@@ -39,13 +39,13 @@ pub async fn google_auth_url_impl() -> Result<String, ServerFnError> {
 
     let cookie_life = Duration::from_secs(60 * 10).try_into().unwrap(); // 10 minutes
     let pkce_cookie = Cookie::build((PKCE_VERIFIER_COOKIE, pkce_verifier.secret().clone()))
-        .same_site(SameSite::Strict)
+        .same_site(SameSite::Lax)
         .path("/")
         .max_age(cookie_life)
         .build();
     jar = jar.add(pkce_cookie);
     let csrf_cookie = Cookie::build((CSRF_TOKEN_COOKIE, csrf_token.secret().clone()))
-        .same_site(SameSite::Strict)
+        .same_site(SameSite::Lax)
         .path("/")
         .max_age(cookie_life)
         .build();
