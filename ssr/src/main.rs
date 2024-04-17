@@ -64,6 +64,7 @@ fn init_cors() -> CorsLayer {
         "https://yral.com",
         "https://auth.yral.com",
         "https://yral-auth.fly.dev",
+        "https://hot-or-not-web-leptos-ssr-staging.fly.dev",
     ]
     .map(|o| o.parse().unwrap());
 
