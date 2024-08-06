@@ -194,6 +194,11 @@ async fn save_identity_in_kv(kv: &KVStoreImpl, identity_key: SecretKey<Secp256k1
 }
 
 fn generate_namespaced_identity_key(namespace: &str, from_secret_key: SecretKey<Secp256k1>) -> SecretKey<Secp256k1>{
+
+    if namespace.to_uppercase().eq("YRAL") {
+        return from_secret_key;
+    }
+
     let app_name = namespace.as_bytes();
 
     let mut combined_bytes:Vec<u8> = Vec::new();
