@@ -110,7 +110,7 @@ impl AuthClient {
             .await
     }
 
-    pub fn prepare_auth_url(&self, identity: &impl Identity, namespace: &str, host: url::Host) -> Result<Url> {
+    pub fn prepare_auth_url(&self, identity: &impl Identity, host: url::Host) -> Result<Url> {
         let intent = LoginIntent {
             referrer_host: host,
         };
