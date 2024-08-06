@@ -34,6 +34,7 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
         principal: params.principal,
         signature: sig,
         referrer_host,
+        namespace: params.namespace
     };
     let temp_id_raw = serde_json::to_string(&temp_id)?;
     let temp_id_cookie = Cookie::build((TEMP_IDENTITY_COOKIE, temp_id_raw))
@@ -55,7 +56,8 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
 struct RootParams {
     principal: Principal,
     /// Signature over [types::LoginIntent]
-    signature_json: String,
+    namespace: String,
+    signature_json: String
 }
 
 #[component]

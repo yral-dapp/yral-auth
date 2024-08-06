@@ -60,6 +60,7 @@ pub fn delegate_identity(from: &impl Identity) -> DelegatedIdentityWire {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct TempIdentity {
     pub principal: Principal,
+    pub namespace: String,
     pub signature: Signature,
     pub referrer_host: url::Host,
 }
