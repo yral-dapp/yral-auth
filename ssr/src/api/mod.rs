@@ -4,17 +4,19 @@ use types::{
     DelegatedIdentityWire, SignedRefreshTokenClaim,
 };
 
+use crate::consts::NAMESPACE;
+
 #[cfg(feature = "ssr")]
 pub mod server_impl;
 
 #[server(endpoint = "extract_or_generate", input = Json, output = Json)]
 pub async fn extract_or_generate_identity() -> Result<DelegatedIdentityWire, ServerFnError> {
-    server_impl::extract_or_generate_identity_impl("yral".into()).await
+    server_impl::extract_or_generate_identity_impl(NAMESPACE.into()).await
 }
 
 #[server(endpoint = "logout", input = Json, output = Json)]
 pub async fn logout_identity() -> Result<DelegatedIdentityWire, ServerFnError> {
-    server_impl::logout_identity_impl("yral".into()).await
+    server_impl::logout_identity_impl(NAMESPACE.into()).await
 }
 
 #[server(endpoint = "upgrade_refresh_claim", input = Json, output = Json)]

@@ -121,8 +121,7 @@ impl AuthClient {
         root_url
             .query_pairs_mut()
             .append_pair("principal", &principal.to_text())
-            .append_pair("signature_json", &signature_json)
-            .append_pair("namespace", namespace);
+            .append_pair("signature_json", &signature_json);
 
         Ok(root_url)
     }
