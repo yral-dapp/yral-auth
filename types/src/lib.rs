@@ -60,6 +60,7 @@ impl From<LoginIntent> for Message {
 pub struct RefreshTokenClaim {
     pub principal: Principal,
     pub expiry_epoch: Duration,
+    pub namespace: String,
     pub referrer_host: Host,
 }
 

@@ -39,6 +39,7 @@ icondata = "0.3.0"
 icondata_core = "0.1.0"
 url = "2.5.0"
 hmac = { version = "0.12.1", optional = true }
+rand = { version = "0.8.5", features = ["std_rng"] }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate", "ic-agent/wasm-bindgen"]

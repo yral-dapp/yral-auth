@@ -12,7 +12,8 @@ use ic_agent::{
     export::Principal,
     identity::{Delegation, Identity, Secp256k1Identity, SignedDelegation},
 };
-use k256::sha2::Sha256;
+use k256::{elliptic_curve::SecretKey, sha2::{Digest, Sha256}, Secp256k1};
+use rand::{rngs::StdRng, SeedableRng};
 use leptos::{expect_context, ServerFnError};
 use leptos_axum::{extract, extract_with_state, ResponseOptions};
 use rand_core::OsRng;
@@ -86,11 +87,12 @@ pub fn set_cookies(resp: &ResponseOptions, jar: impl IntoResponse) {
 }
 
 #[cfg(feature = "oauth")]
-fn refresh_claim(principal: Principal, referrer_host: url::Host) -> types::RefreshTokenClaim {
+fn refresh_claim(principal: Principal, referrer_host: url::Host, namespace: String) -> types::RefreshTokenClaim {
     use types::REFRESH_TOKEN_CLAIM_MAX_AGE;
 
     types::RefreshTokenClaim {
         principal,
+        namespace,
         expiry_epoch: current_epoch() + REFRESH_TOKEN_CLAIM_MAX_AGE,
         referrer_host,
     }
@@ -134,9 +136,10 @@ fn verify_refresh_claim(
     Ok(claim.principal)
 }
 
-#[derive(Clone, Copy, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 struct RefreshToken {
     principal: Principal,
+    namespace: String,
     expiry_epoch_ms: u128,
 }
 
@@ -153,7 +156,7 @@ async fn extract_principal_from_cookie(
     Ok(Some(token.principal))
 }
 
-async fn fetch_identity_from_kv(
+async fn fetch_identity_key_from_kv(
     kv: &KVStoreImpl,
     principal: Principal,
 ) -> Result<Option<k256::SecretKey>, ServerFnError> {
@@ -171,27 +174,55 @@ pub async fn try_extract_identity(
     let Some(principal) = extract_principal_from_cookie(jar).await? else {
         return Ok(None);
     };
-    fetch_identity_from_kv(kv, principal).await
+    fetch_identity_key_from_kv(kv, principal).await
 }
 
-async fn generate_and_save_identity(kv: &KVStoreImpl) -> Result<Secp256k1Identity, ServerFnError> {
+async fn generate_and_save_identity_key(kv: &KVStoreImpl) -> Result<SecretKey<Secp256k1>, ServerFnError> {
     let base_identity_key = k256::SecretKey::random(&mut OsRng);
-    let base_identity = Secp256k1Identity::from_private_key(base_identity_key.clone());
-    let principal = base_identity.sender().unwrap();
-
-    let base_jwk = base_identity_key.to_jwk_string();
-    kv.write(principal.to_text(), base_jwk.to_string()).await?;
-    Ok(base_identity)
+    save_identity_in_kv(kv, base_identity_key.clone()).await?;
+    Ok(base_identity_key)
 }
 
-pub async fn update_user_identity(
+async fn save_identity_in_kv(kv: &KVStoreImpl, identity_key: SecretKey<Secp256k1>) -> Result<(), ServerFnError> {
+
+    let identity = Secp256k1Identity::from_private_key(identity_key.clone());
+    let principal = identity.sender().unwrap();
+    let jwk = identity_key.to_jwk_string();
+    kv.write(principal.to_text(), jwk.to_string()).await?;
+    Ok(())
+}
+
+fn generate_namespaced_identity_key(namespace: &str, from_secret_key: SecretKey<Secp256k1>) -> SecretKey<Secp256k1>{
+    let app_name = namespace.as_bytes();
+
+    let mut combined_bytes:Vec<u8> = Vec::new();
+    combined_bytes.extend_from_slice(&from_secret_key.to_bytes());
+    combined_bytes.extend_from_slice(app_name);
+
+    let mut hasher = Sha256::new();
+    hasher.update(combined_bytes);
+    let hashed_val = hasher.finalize();
+
+    let mut seed = [0u8; 32];
+    seed.copy_from_slice(&hashed_val[..32]);
+
+    k256::SecretKey::random(&mut StdRng::from_seed(seed))
+}
+
+
+
+pub async fn set_cookie_and_get_namespaced_identity(
     response_opts: &ResponseOptions,
     mut jar: SignedCookieJar,
-    identity: impl Identity,
+    identity_key: SecretKey<Secp256k1>,
+    namespace: &str
 ) -> Result<DelegatedIdentityWire, ServerFnError> {
     let refresh_max_age = REFRESH_MAX_AGE;
+    let identity = Secp256k1Identity::from_private_key(identity_key.clone());
+    let principal = identity.sender().unwrap();
     let refresh_token = RefreshToken {
-        principal: identity.sender().unwrap(),
+        principal,
+        namespace: namespace.to_owned(),
         expiry_epoch_ms: (current_epoch() + refresh_max_age).as_millis(),
     };
     let refresh_token_enc = serde_json::to_string(&refresh_token)?;
@@ -207,34 +238,37 @@ pub async fn update_user_identity(
     jar = jar.add(refresh_cookie);
     set_cookies(response_opts, jar);
 
-    Ok(delegate_identity(&identity))
+    let namespaced_identity_key = generate_namespaced_identity_key(&namespace, identity_key);
+    let namespaced_identity = Secp256k1Identity::from_private_key(namespaced_identity_key);
+
+    Ok(delegate_identity(&namespaced_identity))
 }
 
-pub async fn extract_or_generate_identity_impl() -> Result<DelegatedIdentityWire, ServerFnError> {
+pub async fn extract_or_generate_identity_impl(namespace: String) -> Result<DelegatedIdentityWire, ServerFnError> {
     let key: Key = expect_context();
     let jar: SignedCookieJar = extract_with_state(&key).await?;
     let kv: KVStoreImpl = expect_context();
 
-    let base_identity = if let Some(identity) = try_extract_identity(&jar, &kv).await? {
-        Secp256k1Identity::from_private_key(identity)
+    let base_identity_key = if let Some(identity) = try_extract_identity(&jar, &kv).await? {
+       identity
     } else {
-        generate_and_save_identity(&kv).await?
+        generate_and_save_identity_key(&kv).await?
     };
 
     let resp: ResponseOptions = expect_context();
-    let delegated = update_user_identity(&resp, jar, base_identity).await?;
+    let delegated = set_cookie_and_get_namespaced_identity(&resp, jar, base_identity_key, &namespace).await?;
 
     Ok(delegated)
 }
 
-pub async fn logout_identity_impl() -> Result<DelegatedIdentityWire, ServerFnError> {
+pub async fn logout_identity_impl(namespace: String) -> Result<DelegatedIdentityWire, ServerFnError> {
     let key: Key = expect_context();
     let kv: KVStoreImpl = expect_context();
     let jar: SignedCookieJar = extract_with_state(&key).await?;
-    let base_identity = generate_and_save_identity(&kv).await?;
+    let base_identity_key = generate_and_save_identity_key(&kv).await?;
 
     let resp: ResponseOptions = expect_context();
-    let delegated = update_user_identity(&resp, jar, base_identity).await?;
+    let delegated = set_cookie_and_get_namespaced_identity(&resp, jar, base_identity_key, &namespace).await?;
     Ok(delegated)
 }
 
@@ -257,13 +291,16 @@ pub async fn upgrade_refresh_claim_impl(
         .ok_or_else(|| ServerFnError::new("No referrer host"))?
         .to_owned();
 
-    let principal = verify_refresh_claim(s_claim, host, &key)?;
-    let sk = fetch_identity_from_kv(&kv, principal)
+    let principal = verify_refresh_claim(s_claim.clone(), host, &key)?;
+    let sk = fetch_identity_key_from_kv(&kv, principal)
         .await?
         .ok_or_else(|| ServerFnError::new("No identity found"))?;
 
+
+    let namespace = s_claim.claim.namespace.clone();
+
     let delegated =
-        update_user_identity(&resp, jar, Secp256k1Identity::from_private_key(sk)).await?;
+        set_cookie_and_get_namespaced_identity(&resp, jar, sk, &namespace).await?;
     Ok(delegated)
 }
 
