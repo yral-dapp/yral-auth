@@ -13,7 +13,10 @@
     {
       devShells.${system}.default = pkgs.mkShell
       {
-        packages = with pkgs; [ rustup cargo ]; # whatever you need
+        packages = with pkgs; [ rustup cargo ]++ (if pkgs.stdenv.isDarwin then [
+            darwin.apple_sdk.frameworks.Foundation
+            pkgs.darwin.libiconv
+          ] else []);
       };
     };
 }
