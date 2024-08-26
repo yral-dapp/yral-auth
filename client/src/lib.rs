@@ -7,7 +7,7 @@ use consts::DEFAULT_AUTH_URL;
 pub use error::*;
 use ic_agent::{export::Principal, Identity};
 use reqs::{EmptyReq, GetUserMetadataReqW, SetUserMetadataReqW, UpgradeRefreshClaimReq};
-use reqwest::Url;
+use reqwest::{header::{self, HeaderMap}, Url};
 use serde::{de::DeserializeOwned, Serialize};
 use types::{
     metadata::{
@@ -34,10 +34,12 @@ impl Default for AuthClient {
 }
 
 impl AuthClient {
-    pub fn with_base_url(base_url: Url) -> Self {
+    pub fn with_base_url(base_url: Url, token: &str) -> Self {
+        let headers = HeaderMap::new();
+        headers.insert(header::AUTHORIZATION, format!("Bearer {token}"));
         Self {
             base_url,
-            client: Default::default(),
+            client: reqwest::Client::builder().default_headers(headers),
         }
     }
 

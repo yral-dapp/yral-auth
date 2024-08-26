@@ -7,11 +7,18 @@ use types::{
 use crate::consts::NAMESPACE;
 
 #[cfg(feature = "ssr")]
+use crate::extractors::JwtAuth;
+
+#[cfg(feature = "ssr")]
 pub mod server_impl;
+
+#[cfg(feature = "ssr")]
+use leptos_axum::extract;
 
 #[server(endpoint = "extract_or_generate", input = Json, output = Json)]
 pub async fn extract_or_generate_identity() -> Result<DelegatedIdentityWire, ServerFnError> {
-    server_impl::extract_or_generate_identity_impl(NAMESPACE.into()).await
+    let jwt_auth = extract::<JwtAuth>().await?;
+    server_impl::extract_or_generate_identity_impl(jwt_auth.namespace).await
 }
 
 #[server(endpoint = "logout", input = Json, output = Json)]
