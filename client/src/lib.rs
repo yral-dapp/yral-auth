@@ -35,11 +35,11 @@ impl Default for AuthClient {
 
 impl AuthClient {
     pub fn with_base_url(base_url: Url, token: &str) -> Self {
-        let headers = HeaderMap::new();
+        let headers = HeaderMap::<String>::new();
         headers.insert(header::AUTHORIZATION, format!("Bearer {token}"));
         Self {
             base_url,
-            client: reqwest::Client::builder().default_headers(headers),
+            client: reqwest::Client::builder().default_headers(headers).build().unwrap(),
         }
     }
 
