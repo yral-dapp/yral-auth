@@ -5,6 +5,9 @@ pub mod consts;
 pub mod error_template;
 #[cfg(feature = "ssr")]
 pub mod fileserv;
+
+#[cfg(feature = "ssr")]
+pub mod extractors;
 pub mod page;
 pub mod state;
 

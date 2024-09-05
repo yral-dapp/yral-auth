@@ -6,6 +6,7 @@ pub const DELEGATION_MAX_AGE: Duration = Duration::from_secs(60 * 60 * 24 * 7);
 pub const REFRESH_MAX_AGE: Duration = Duration::from_secs(60 * 60 * 24 * 30);
 pub const REFRESH_TOKEN_COOKIE: &str = "user-identity";
 pub const TEMP_IDENTITY_COOKIE: &str = "temp-identity";
+pub const NAMESPACE: &str = "YRAL";
 
 #[cfg(all(feature = "ssr", feature = "oauth-google"))]
 pub mod google {

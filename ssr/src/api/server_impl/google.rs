@@ -138,6 +138,7 @@ pub async fn perform_google_auth_impl(
         .ok_or_else(|| ServerFnError::new("Attempting google login without a temp identity"))?;
     let temp_id: TempIdentity = serde_json::from_str(temp_id_cookie.value())?;
     let principal = temp_id.principal;
+    let namespace = temp_id.namespace.clone();
     let host = temp_id.referrer_host.clone();
     temp_id.validate()?;
 
@@ -147,7 +148,7 @@ pub async fn perform_google_auth_impl(
         } else {
             associate_principal_with_google_sub(&kv, principal, sub_id).await?
         };
-    let claim = refresh_claim(principal, host);
+    let claim = refresh_claim(principal, host, namespace);
     let s_claim = sign_refresh_claim(claim, &key)?;
 
     Ok(s_claim)

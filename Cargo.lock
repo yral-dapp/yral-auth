@@ -1960,7 +1960,7 @@ dependencies = [
  "k256",
  "lazy_static",
  "num-bigint",
- "pem",
+ "pem 1.1.1",
  "rand",
  "simple_asn1",
  "zeroize",
@@ -1974,7 +1974,7 @@ dependencies = [
  "lazy_static",
  "num-bigint",
  "p256",
- "pem",
+ "pem 1.1.1",
  "rand",
  "rand_chacha",
  "simple_asn1",
@@ -2759,6 +2759,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "jsonwebtoken"
+version = "9.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b9ae10193d25051e74945f1ea2d0b42e03cc3b890f7e4cc5faa44997d808193f"
+dependencies = [
+ "base64 0.21.7",
+ "js-sys",
+ "pem 3.0.4",
+ "ring",
+ "serde",
+ "serde_json",
+ "simple_asn1",
+]
+
+[[package]]
 name = "k256"
 version = "0.13.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3524,6 +3539,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8835c273a76a90455d7344889b0964598e3316e2a79ede8e36f16bdcf2228b8"
 dependencies = [
  "base64 0.13.1",
+]
+
+[[package]]
+name = "pem"
+version = "3.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e459365e590736a54c3fa561947c84837534b8e9af6fc5bf781307e82658fae"
+dependencies = [
+ "base64 0.22.0",
+ "serde",
 ]
 
 [[package]]
@@ -5785,6 +5810,7 @@ dependencies = [
  "ic-agent",
  "icondata",
  "icondata_core",
+ "jsonwebtoken",
  "k256",
  "leptos",
  "leptos_axum",
@@ -5793,6 +5819,7 @@ dependencies = [
  "leptos_router",
  "log",
  "openidconnect",
+ "rand",
  "rand_core",
  "serde",
  "serde_json",

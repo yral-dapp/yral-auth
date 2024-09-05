@@ -3,6 +3,8 @@ use leptos::*;
 use leptos_router::*;
 use serde::{Deserialize, Serialize};
 
+use crate::consts::NAMESPACE;
+
 #[server]
 async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
     use crate::api::server_impl::{set_cookies, TempIdentity};
@@ -18,6 +20,7 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
     use yral_identity::Signature;
 
     let sig: Signature = serde_json::from_str(&params.signature_json)?;
+    let namespace = NAMESPACE.into();
 
     let headers: HeaderMap = extract().await?;
     let referrer_raw = headers
@@ -34,6 +37,7 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
         principal: params.principal,
         signature: sig,
         referrer_host,
+        namespace
     };
     let temp_id_raw = serde_json::to_string(&temp_id)?;
     let temp_id_cookie = Cookie::build((TEMP_IDENTITY_COOKIE, temp_id_raw))
@@ -55,7 +59,7 @@ async fn prepare_cookies(params: RootParams) -> Result<(), ServerFnError> {
 struct RootParams {
     principal: Principal,
     /// Signature over [types::LoginIntent]
-    signature_json: String,
+    signature_json: String
 }
 
 #[component]
